@@ -21,8 +21,12 @@ func (gh *GitHub) FetchContributors(repo *model.Repository, page int) ([]*model.
 	if err := json.NewDecoder(resp.Body).Decode(&fetcheds); err != nil {
 		return nil, err
 	}
+	adapteds := fetcheds.adapt()
+	for i := range adapteds {
+		adapteds[i].Repo = repo
+	}
 
-	return fetcheds.adapt(), nil
+	return adapteds, nil
 }
 
 type contributors []*contributor
