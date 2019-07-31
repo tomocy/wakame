@@ -1,6 +1,9 @@
 package model
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 type Contributors []*Contributor
 
@@ -22,4 +25,8 @@ type Contributor struct {
 
 type Repository struct {
 	Owner, Name string
+}
+
+func (r Repository) String() string {
+	return fmt.Sprintf("%s/%s", r.Owner, r.Name)
 }
