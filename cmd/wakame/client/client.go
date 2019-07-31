@@ -4,6 +4,9 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"os"
+
+	"github.com/olekukonko/tablewriter"
 
 	"github.com/tomocy/wakame/domain/model"
 	"github.com/tomocy/wakame/infra/github"
@@ -47,6 +50,14 @@ func (c *CLI) parse() (*config, error) {
 
 func (c *CLI) ShowUsage() {
 	flag.Usage()
+}
+
+func (c *CLI) ShowContributor(contri *model.Contributor) {
+	w := tablewriter.NewWriter(os.Stdout)
+	w.SetHeader([]string{"Username", "Contributions"})
+	w.Append([]string{contri.Name, fmt.Sprintf("%d", contri.Contributions)})
+
+	w.Render()
 }
 
 type config struct {
