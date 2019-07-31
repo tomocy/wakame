@@ -11,7 +11,7 @@ import (
 type GitHub struct{}
 
 func (gh *GitHub) FetchContributors(owner, repo string, page int) ([]*model.Contributor, error) {
-	resp, err := http.Get(fmt.Sprintf("https://api.github.com/repos/%s/%s?page=%d", owner, repo, page))
+	resp, err := http.Get(fmt.Sprintf("https://api.github.com/repos/%s/%s/contributors?page=%d", owner, repo, page))
 	if err != nil {
 		return nil, err
 	}
