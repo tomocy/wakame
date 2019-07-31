@@ -18,3 +18,7 @@ type Contributor struct {
 	Name          string
 	Contributions int
 }
+
+type Repository struct {
+	Owner, Name string
+}
