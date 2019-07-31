@@ -9,6 +9,12 @@ import (
 	"github.com/tomocy/wakame/domain/repository"
 )
 
+func NewContributorUsecase(repo repository.ContributorRepository) *ContributorUsecase {
+	return &ContributorUsecase{
+		repo: repo,
+	}
+}
+
 type ContributorUsecase struct {
 	repo repository.ContributorRepository
 }
