@@ -32,7 +32,10 @@ func (c *CLI) FetchContributor() (*model.Contributor, error) {
 	repo := new(github.GitHub)
 	uc := usecase.NewContributorUsecase(repo)
 
-	return uc.Fetch(config.owner, config.repo, config.uname)
+	return uc.Fetch(&model.Repository{
+		Owner: config.owner,
+		Name:  config.repo,
+	}, config.uname)
 }
 
 func (c *CLI) parse() (*config, error) {

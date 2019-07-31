@@ -19,9 +19,9 @@ type ContributorUsecase struct {
 	repo repository.ContributorRepository
 }
 
-func (u *ContributorUsecase) Fetch(owner, repo, uname string) (*model.Contributor, error) {
+func (u *ContributorUsecase) Fetch(repo *model.Repository, uname string) (*model.Contributor, error) {
 	for page := 1; ; page++ {
-		fetcheds, err := u.repo.FetchContributors(owner, repo, page)
+		fetcheds, err := u.repo.FetchContributors(repo, page)
 		if err != nil {
 			return nil, report("fetch contributors", err)
 		}
