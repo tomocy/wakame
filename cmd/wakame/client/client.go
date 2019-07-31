@@ -72,8 +72,8 @@ func (c *CLI) ShowUsage() {
 
 func (c *CLI) ShowContributor(contri *model.Contributor) {
 	w := tablewriter.NewWriter(os.Stdout)
-	w.SetHeader([]string{"Username", "Contributions"})
-	w.Append([]string{contri.Name, fmt.Sprintf("%d", contri.Contributions)})
+	w.SetHeader([]string{"Username", "Repository", "Contributions"})
+	w.Append([]string{contri.Name, contri.Repo.String(), fmt.Sprintf("%d", contri.Contributions)})
 
 	w.Render()
 }
