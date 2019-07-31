@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/olekukonko/tablewriter"
 
@@ -35,17 +36,31 @@ func (c *CLI) FetchContributor() (*model.Contributor, error) {
 }
 
 func (c *CLI) parse() (*config, error) {
-	parsed := new(config)
-	flag.StringVar(&parsed.owner, "owner", "", "name of owner")
-	flag.StringVar(&parsed.repo, "repo", "", "name of repository")
-	flag.Parse()
-	parsed.uname = flag.Arg(0)
-
-	if err := parsed.validate(); err != nil {
+	config, err := c.parseConfig()
+	if err != nil {
 		return nil, err
 	}
 
-	return parsed, nil
+	if err := config.validate(); err != nil {
+		return nil, err
+	}
+
+	return config, nil
+}
+
+func (c *CLI) parseConfig() (*config, error) {
+	r := flag.String("r", "", "name of owner/repository")
+	flag.Parse()
+	splited := strings.Split(*r, "/")
+	if len(splited) != 2 {
+		return nil, errors.New("invalid format of name of owner/repository")
+	}
+
+	return &config{
+		owner: splited[0],
+		repo:  splited[1],
+		uname: flag.Arg(0),
+	}, nil
 }
 
 func (c *CLI) ShowUsage() {
