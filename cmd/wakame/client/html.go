@@ -34,8 +34,19 @@ func (h *HTML) load() error {
 	h.caster, err = caster.New(&caster.TemplateSet{
 		Filenames: []string{h.join("master.html")},
 	})
+	if err != nil {
+		return err
+	}
 
-	return err
+	if err := h.caster.ExtendAll(map[string]*caster.TemplateSet{
+		"contributor.single": &caster.TemplateSet{
+			Filenames: []string{h.join("contributor/single.html")},
+		},
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (h *HTML) join(ss ...string) string {
