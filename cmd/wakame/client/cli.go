@@ -23,6 +23,19 @@ type CLI struct {
 	args []string
 }
 
+func (c *CLI) Run() int {
+	contri, err := c.FetchContributor()
+	if err != nil {
+		fmt.Println(err)
+		c.ShowUsage()
+		return 1
+	}
+
+	c.ShowContributor(contri)
+
+	return 0
+}
+
 func (c *CLI) FetchContributor() (*model.Contributor, error) {
 	config, err := c.parse()
 	if err != nil {
