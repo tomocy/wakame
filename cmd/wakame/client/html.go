@@ -6,6 +6,10 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/tomocy/wakame/domain/model"
+	"github.com/tomocy/wakame/infra"
+	"github.com/tomocy/wakame/usecase"
+
 	"github.com/go-chi/chi"
 	"github.com/tomocy/caster"
 )
@@ -66,4 +70,46 @@ func (h *HTML) prepareHandler() http.Handler {
 	return r
 }
 
-func (h *HTML) register(r chi.Router) {}
+func (h *HTML) register(r chi.Router) {
+	r.Get("/{owner}/{repo}/{uname}", h.showContributor)
+}
+
+func (h *HTML) showContributor(w http.ResponseWriter, r *http.Request) {
+	config, err := h.parse(r)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	repo := new(infra.GitHub)
+	uc := usecase.NewContributorUsecase(repo)
+	contri, err := uc.Fetch(&model.Repository{
+		Owner: config.owner,
+		Name:  config.repo,
+	}, config.uname)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if err := h.caster.Cast(w, "contributor.single", map[string]interface{}{
+		"Contributor": contri,
+	}); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *HTML) parse(r *http.Request) (*config, error) {
+	config := &config{
+		owner: chi.URLParam(r, "owner"),
+		repo:  chi.URLParam(r, "repo"),
+		uname: chi.URLParam(r, "uname"),
+	}
+
+	if err := config.validate(); err != nil {
+		return nil, err
+	}
+
+	return config, nil
+}
