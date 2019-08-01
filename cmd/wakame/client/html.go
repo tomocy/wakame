@@ -1,15 +1,13 @@
 package client
 
 import (
+	"net/http"
 	"os"
 	"path/filepath"
 
+	"github.com/go-chi/chi"
 	"github.com/tomocy/caster"
 )
-
-func NewHTML() *HTML {
-	return new(HTML)
-}
 
 type HTML struct {
 	caster caster.Caster
@@ -29,3 +27,12 @@ func (h *HTML) join(ss ...string) string {
 	ps := append([]string{dir}, ss...)
 	return filepath.Join(ps...)
 }
+
+func (h *HTML) prepareHandler() http.Handler {
+	r := chi.NewRouter()
+	h.register(r)
+
+	return r
+}
+
+func (h *HTML) register(r chi.Router) {}
