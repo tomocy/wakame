@@ -10,7 +10,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 
 	"github.com/tomocy/wakame/domain/model"
-	"github.com/tomocy/wakame/infra/github"
+	"github.com/tomocy/wakame/infra"
 	"github.com/tomocy/wakame/usecase"
 )
 
@@ -29,7 +29,7 @@ func (c *CLI) FetchContributor() (*model.Contributor, error) {
 	if err != nil {
 		return nil, report("fetch contributor", err)
 	}
-	repo := new(github.GitHub)
+	repo := new(infra.GitHub)
 	uc := usecase.NewContributorUsecase(repo)
 
 	return uc.Fetch(&model.Repository{
