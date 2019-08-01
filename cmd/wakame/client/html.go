@@ -10,6 +10,10 @@ import (
 	"github.com/tomocy/caster"
 )
 
+func NewHTML() *HTML {
+	return new(HTML)
+}
+
 type HTML struct {
 	caster caster.Caster
 }
