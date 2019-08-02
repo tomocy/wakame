@@ -13,11 +13,14 @@ import (
 	"github.com/tomocy/caster"
 )
 
-func NewHTML() *HTML {
-	return new(HTML)
+func NewHTML(addr string) *HTML {
+	return &HTML{
+		addr: addr,
+	}
 }
 
 type HTML struct {
+	addr   string
 	caster caster.Caster
 }
 
@@ -27,7 +30,7 @@ func (h *HTML) Run() error {
 	}
 
 	hand := h.prepareHandler()
-	if err := http.ListenAndServe(":80", hand); err != nil {
+	if err := http.ListenAndServe(h.addr, hand); err != nil {
 		return err
 	}
 

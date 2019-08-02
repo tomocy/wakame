@@ -72,7 +72,7 @@ func (a *app) runCLI(ctx *cli.Context) error {
 }
 
 func (a *app) runHTML(ctx *cli.Context) error {
-	c := client.NewHTML()
+	c := client.NewHTML(":80")
 
 	return c.Run()
 }
