@@ -1,6 +1,7 @@
 package client
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -30,6 +31,7 @@ func (h *HTML) Run() error {
 	}
 
 	hand := h.prepareHandler()
+	fmt.Printf("listen and serve on %s\n", h.addr)
 	if err := http.ListenAndServe(h.addr, hand); err != nil {
 		return err
 	}
