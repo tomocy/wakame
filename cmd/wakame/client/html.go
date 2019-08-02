@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/tomocy/wakame/domain/model"
 	"github.com/tomocy/wakame/infra"
@@ -127,14 +126,9 @@ func (h *HTML) showContributor(w http.ResponseWriter, config *Config) {
 
 func (h *HTML) parse(r *http.Request) *Config {
 	q := r.URL.Query()
-	repo := "/"
-	if q.Get("r") != "" {
-		repo = q.Get("r")
-	}
-	splited := strings.SplitN(repo, "/", 2)
 	config := &Config{
-		Owner:    splited[0],
-		Repo:     splited[1],
+		Owner:    q.Get("o"),
+		Repo:     q.Get("r"),
 		Username: q.Get("u"),
 	}
 
