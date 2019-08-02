@@ -49,6 +49,9 @@ func (h *HTML) load() error {
 	}
 
 	if err := h.caster.ExtendAll(map[string]*caster.TemplateSet{
+		"contributor.new": &caster.TemplateSet{
+			Filenames: []string{h.join("contributor/new.html")},
+		},
 		"contributor.single": &caster.TemplateSet{
 			Filenames: []string{h.join("contributor/single.html")},
 		},
@@ -80,7 +83,15 @@ func (h *HTML) prepareHandler() http.Handler {
 
 func (h *HTML) register(r chi.Router) {
 	r.Get("/css/*", http.StripPrefix("/css", http.FileServer(http.Dir(h.joinResource("css")))).ServeHTTP)
+	r.Get("/", h.showContributorSearchForm)
 	r.Get("/{owner}/{repo}/{uname}", h.showContributor)
+}
+
+func (h *HTML) showContributorSearchForm(w http.ResponseWriter, r *http.Request) {
+	if err := h.caster.Cast(w, "contributor.new", nil); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *HTML) showContributor(w http.ResponseWriter, r *http.Request) {
