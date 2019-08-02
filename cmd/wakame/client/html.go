@@ -65,6 +65,12 @@ func (h *HTML) join(ss ...string) string {
 	return filepath.Join(ps...)
 }
 
+func (h *HTML) joinResource(ss ...string) string {
+	dir := filepath.Join(os.Getenv("GOPATH"), "src/github.com/tomocy/wakame/cmd/wakame/client/resource")
+	ps := append([]string{dir}, ss...)
+	return filepath.Join(ps...)
+}
+
 func (h *HTML) prepareHandler() http.Handler {
 	r := chi.NewRouter()
 	h.register(r)
@@ -73,6 +79,7 @@ func (h *HTML) prepareHandler() http.Handler {
 }
 
 func (h *HTML) register(r chi.Router) {
+	r.Get("/css/*", http.StripPrefix("/css", http.FileServer(http.Dir(h.joinResource("css")))).ServeHTTP)
 	r.Get("/{owner}/{repo}/{uname}", h.showContributor)
 }
 
