@@ -42,12 +42,14 @@ func (cs contributors) adapt() []*model.Contributor {
 
 type contributor struct {
 	Login         string `json:"login"`
+	AvatarURL     string `json:"avatar_url"`
 	Contributions int    `json:"contributions"`
 }
 
 func (c *contributor) adapt() *model.Contributor {
 	return &model.Contributor{
 		Name:          c.Login,
+		ImageURL:      c.AvatarURL,
 		Contributions: c.Contributions,
 	}
 }
