@@ -1,0 +1,9 @@
+.container {
+    height: 100vh;
+}
+
+.center {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
