@@ -57,6 +57,7 @@ func (a *app) setCommands() {
 				&cli.StringFlag{
 					Name:  "a",
 					Value: ":80",
+					Usage: "address to listen on",
 				},
 			},
 		},
