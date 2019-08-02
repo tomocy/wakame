@@ -11,15 +11,11 @@ import (
 	"github.com/tomocy/wakame/usecase"
 )
 
-func NewCLI(args []string) *CLI {
-	return &CLI{
-		args: args,
-	}
+func NewCLI() *CLI {
+	return new(CLI)
 }
 
-type CLI struct {
-	args []string
-}
+type CLI struct{}
 
 func (c *CLI) Run(config *Config) int {
 	contri, err := c.FetchContributor(config)

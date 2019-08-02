@@ -57,7 +57,7 @@ func (a *app) setCommands() {
 }
 
 func (a *app) runCLI(ctx *cli.Context) error {
-	c := client.NewCLI(os.Args)
+	c := client.NewCLI()
 	splited := strings.SplitN(ctx.String("r"), "/", 2)
 	config := &client.Config{
 		Owner:    splited[0],
