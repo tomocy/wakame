@@ -45,7 +45,8 @@ func (a *app) setCommands() {
 			Action: a.runCLI,
 			Flags: []cli.Flag{
 				&cli.StringFlag{
-					Name: "r",
+					Name:  "r",
+					Usage: "name of owner/repository",
 				},
 			},
 		},
