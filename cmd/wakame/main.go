@@ -52,6 +52,12 @@ func (a *app) setCommands() {
 		{
 			Name:   "html",
 			Action: a.runHTML,
+			Flags: []cli.Flag{
+				&cli.StringFlag{
+					Name:  "a",
+					Value: ":80",
+				},
+			},
 		},
 	}
 }
@@ -72,7 +78,7 @@ func (a *app) runCLI(ctx *cli.Context) error {
 }
 
 func (a *app) runHTML(ctx *cli.Context) error {
-	c := client.NewHTML(":80")
+	c := client.NewHTML(ctx.String("a"))
 
 	return c.Run()
 }
