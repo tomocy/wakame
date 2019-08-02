@@ -17,17 +17,15 @@ func NewCLI() *CLI {
 
 type CLI struct{}
 
-func (c *CLI) Run(config *Config) int {
+func (c *CLI) Run(config *Config) error {
 	contri, err := c.FetchContributor(config)
 	if err != nil {
-		fmt.Println(err)
-		c.ShowUsage()
-		return 1
+		return err
 	}
 
 	c.ShowContributor(contri)
 
-	return 0
+	return nil
 }
 
 func (c *CLI) FetchContributor(config *Config) (*model.Contributor, error) {

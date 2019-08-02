@@ -68,16 +68,13 @@ func (a *app) runCLI(ctx *cli.Context) error {
 		return err
 	}
 
-	os.Exit(c.Run(config))
-
-	return nil
+	return c.Run(config)
 }
 
 func (a *app) runHTML(ctx *cli.Context) error {
 	c := client.NewHTML()
-	os.Exit(c.Run())
 
-	return nil
+	return c.Run()
 }
 
 func (a *app) run(args []string) error {

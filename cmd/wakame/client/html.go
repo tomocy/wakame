@@ -1,7 +1,6 @@
 package client
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -22,19 +21,17 @@ type HTML struct {
 	caster caster.Caster
 }
 
-func (h *HTML) Run() int {
+func (h *HTML) Run() error {
 	if err := h.load(); err != nil {
-		fmt.Printf("failed for html to run: %s\n", err)
-		return 1
+		return err
 	}
 
 	hand := h.prepareHandler()
 	if err := http.ListenAndServe(":80", hand); err != nil {
-		fmt.Printf("failed for html to run: %s\n", err)
-		return 1
+		return err
 	}
 
-	return 0
+	return nil
 }
 
 func (h *HTML) load() error {
