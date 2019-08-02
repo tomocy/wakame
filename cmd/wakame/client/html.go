@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/tomocy/wakame/domain/model"
 	"github.com/tomocy/wakame/infra"
@@ -82,24 +83,27 @@ func (h *HTML) prepareHandler() http.Handler {
 
 func (h *HTML) register(r chi.Router) {
 	r.Get("/css/*", http.StripPrefix("/css", http.FileServer(http.Dir(h.join("css")))).ServeHTTP)
-	r.Get("/", h.showContributorSearchForm)
-	r.Get("/{owner}/{repo}/{uname}", h.showContributor)
+	r.Get("/", h.showContributorOrSearchForm)
 }
 
-func (h *HTML) showContributorSearchForm(w http.ResponseWriter, r *http.Request) {
+func (h *HTML) showContributorOrSearchForm(w http.ResponseWriter, r *http.Request) {
+	config, err := h.parse(r)
+	if err != nil {
+		h.showContributorSearchForm(w, config)
+		return
+	}
+
+	h.showContributor(w, config)
+}
+
+func (h *HTML) showContributorSearchForm(w http.ResponseWriter, config *Config) {
 	if err := h.caster.Cast(w, "contributor.new", nil); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 }
 
-func (h *HTML) showContributor(w http.ResponseWriter, r *http.Request) {
-	config, err := h.parse(r)
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
+func (h *HTML) showContributor(w http.ResponseWriter, config *Config) {
 	repo := new(infra.GitHub)
 	uc := usecase.NewContributorUsecase(repo)
 	contri, err := uc.Fetch(&model.Repository{
@@ -120,10 +124,16 @@ func (h *HTML) showContributor(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *HTML) parse(r *http.Request) (*Config, error) {
+	q := r.URL.Query()
+	repo := "/"
+	if q.Get("r") != "" {
+		repo = q.Get("r")
+	}
+	splited := strings.SplitN(repo, "/", 2)
 	config := &Config{
-		Owner:    chi.URLParam(r, "owner"),
-		Repo:     chi.URLParam(r, "repo"),
-		Username: chi.URLParam(r, "uname"),
+		Owner:    splited[0],
+		Repo:     splited[1],
+		Username: q.Get("u"),
 	}
 
 	if err := config.Validate(); err != nil {
