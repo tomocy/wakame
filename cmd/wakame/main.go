@@ -11,6 +11,8 @@ func main() {
 	os.Exit(runner.Run())
 }
 
+type app struct{}
+
 func newRunner() runner {
 	return client.NewCLI(os.Args)
 }
