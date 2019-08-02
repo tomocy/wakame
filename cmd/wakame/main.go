@@ -1,22 +1,85 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"strings"
 
 	"github.com/tomocy/wakame/cmd/wakame/client"
+	"github.com/urfave/cli"
 )
 
 func main() {
-	runner := newRunner()
-	os.Exit(runner.Run())
+	app := newApp()
+	if err := app.run(os.Args); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to run app: %s\n", err)
+		return
+	}
 }
 
-type app struct{}
+func newApp() *app {
+	a := new(app)
+	a.setUp()
 
-func newRunner() runner {
-	return client.NewCLI(os.Args)
+	return a
 }
 
-type runner interface {
-	Run() int
+type app struct {
+	driver *cli.App
+}
+
+func (a *app) setUp() {
+	a.driver = cli.NewApp()
+	a.setBasic()
+	a.setCommands()
+}
+
+func (a *app) setBasic() {
+	a.driver.Name = "wakame"
+}
+
+func (a *app) setCommands() {
+	a.driver.Commands = []cli.Command{
+		{
+			Name:   "cli",
+			Action: a.runCLI,
+			Flags: []cli.Flag{
+				&cli.StringFlag{
+					Name: "r",
+				},
+			},
+		},
+		{
+			Name:   "html",
+			Action: a.runHTML,
+		},
+	}
+}
+
+func (a *app) runCLI(ctx *cli.Context) error {
+	c := client.NewCLI(os.Args)
+	splited := strings.SplitN(ctx.String("r"), "/", 2)
+	config := &client.Config{
+		Owner:    splited[0],
+		Repo:     splited[1],
+		Username: ctx.Args().First(),
+	}
+	if err := config.Validate(); err != nil {
+		return err
+	}
+
+	os.Exit(c.Run(config))
+
+	return nil
+}
+
+func (a *app) runHTML(ctx *cli.Context) error {
+	c := client.NewHTML()
+	os.Exit(c.Run())
+
+	return nil
+}
+
+func (a *app) run(args []string) error {
+	return a.driver.Run(args)
 }

@@ -1,11 +1,9 @@
 package client
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/tomocy/wakame/domain/model"
@@ -23,8 +21,8 @@ type CLI struct {
 	args []string
 }
 
-func (c *CLI) Run() int {
-	contri, err := c.FetchContributor()
+func (c *CLI) Run(config *Config) int {
+	contri, err := c.FetchContributor(config)
 	if err != nil {
 		fmt.Println(err)
 		c.ShowUsage()
@@ -36,46 +34,14 @@ func (c *CLI) Run() int {
 	return 0
 }
 
-func (c *CLI) FetchContributor() (*model.Contributor, error) {
-	config, err := c.parse()
-	if err != nil {
-		return nil, report("fetch contributor", err)
-	}
+func (c *CLI) FetchContributor(config *Config) (*model.Contributor, error) {
 	repo := new(infra.GitHub)
 	uc := usecase.NewContributorUsecase(repo)
 
 	return uc.Fetch(&model.Repository{
-		Owner: config.owner,
-		Name:  config.repo,
-	}, config.uname)
-}
-
-func (c *CLI) parse() (*config, error) {
-	config, err := c.parseConfig()
-	if err != nil {
-		return nil, err
-	}
-
-	if err := config.validate(); err != nil {
-		return nil, err
-	}
-
-	return config, nil
-}
-
-func (c *CLI) parseConfig() (*config, error) {
-	r := flag.String("r", "", "name of owner/repository")
-	flag.Parse()
-	splited := strings.Split(*r, "/")
-	if len(splited) != 2 {
-		return nil, errors.New("invalid format of name of owner/repository")
-	}
-
-	return &config{
-		owner: splited[0],
-		repo:  splited[1],
-		uname: flag.Arg(0),
-	}, nil
+		Owner: config.Owner,
+		Name:  config.Repo,
+	}, config.Username)
 }
 
 func (c *CLI) ShowUsage() {

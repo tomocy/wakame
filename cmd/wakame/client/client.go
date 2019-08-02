@@ -5,19 +5,19 @@ import (
 	"fmt"
 )
 
-type config struct {
-	owner, repo string
-	uname       string
+type Config struct {
+	Owner, Repo string
+	Username    string
 }
 
-func (c *config) validate() error {
-	if c.owner == "" {
+func (c *Config) Validate() error {
+	if c.Owner == "" {
 		return errors.New("owner is empty")
 	}
-	if c.repo == "" {
+	if c.Repo == "" {
 		return errors.New("repo is empty")
 	}
-	if c.uname == "" {
+	if c.Username == "" {
 		return errors.New("username is empty")
 	}
 

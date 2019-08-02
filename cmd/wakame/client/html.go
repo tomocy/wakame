@@ -84,9 +84,9 @@ func (h *HTML) showContributor(w http.ResponseWriter, r *http.Request) {
 	repo := new(infra.GitHub)
 	uc := usecase.NewContributorUsecase(repo)
 	contri, err := uc.Fetch(&model.Repository{
-		Owner: config.owner,
-		Name:  config.repo,
-	}, config.uname)
+		Owner: config.Owner,
+		Name:  config.Repo,
+	}, config.Username)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -100,14 +100,14 @@ func (h *HTML) showContributor(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *HTML) parse(r *http.Request) (*config, error) {
-	config := &config{
-		owner: chi.URLParam(r, "owner"),
-		repo:  chi.URLParam(r, "repo"),
-		uname: chi.URLParam(r, "uname"),
+func (h *HTML) parse(r *http.Request) (*Config, error) {
+	config := &Config{
+		Owner:    chi.URLParam(r, "owner"),
+		Repo:     chi.URLParam(r, "repo"),
+		Username: chi.URLParam(r, "uname"),
 	}
 
-	if err := config.validate(); err != nil {
+	if err := config.Validate(); err != nil {
 		return nil, err
 	}
 
