@@ -19,6 +19,7 @@ func (cs Contributors) Find(name string) (*Contributor, error) {
 
 type Contributor struct {
 	Name          string
+	ImageURL      string
 	Repo          *Repository
 	Contributions int
 }
