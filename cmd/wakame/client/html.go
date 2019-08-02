@@ -42,7 +42,7 @@ func (h *HTML) Run() error {
 func (h *HTML) load() error {
 	var err error
 	h.caster, err = caster.New(&caster.TemplateSet{
-		Filenames: []string{h.join("master.html")},
+		Filenames: []string{h.joinHTML("master.html")},
 	})
 	if err != nil {
 		return err
@@ -50,10 +50,10 @@ func (h *HTML) load() error {
 
 	if err := h.caster.ExtendAll(map[string]*caster.TemplateSet{
 		"contributor.new": &caster.TemplateSet{
-			Filenames: []string{h.join("contributor/new.html")},
+			Filenames: []string{h.joinHTML("contributor/new.html")},
 		},
 		"contributor.single": &caster.TemplateSet{
-			Filenames: []string{h.join("contributor/single.html")},
+			Filenames: []string{h.joinHTML("contributor/single.html")},
 		},
 	}); err != nil {
 		return err
@@ -62,13 +62,12 @@ func (h *HTML) load() error {
 	return nil
 }
 
-func (h *HTML) join(ss ...string) string {
-	dir := filepath.Join(os.Getenv("GOPATH"), "src/github.com/tomocy/wakame/cmd/wakame/client/resource/html")
-	ps := append([]string{dir}, ss...)
-	return filepath.Join(ps...)
+func (h *HTML) joinHTML(ss ...string) string {
+	ps := append([]string{"html"}, ss...)
+	return h.join(ps...)
 }
 
-func (h *HTML) joinResource(ss ...string) string {
+func (h *HTML) join(ss ...string) string {
 	dir := filepath.Join(os.Getenv("GOPATH"), "src/github.com/tomocy/wakame/cmd/wakame/client/resource")
 	ps := append([]string{dir}, ss...)
 	return filepath.Join(ps...)
@@ -82,7 +81,7 @@ func (h *HTML) prepareHandler() http.Handler {
 }
 
 func (h *HTML) register(r chi.Router) {
-	r.Get("/css/*", http.StripPrefix("/css", http.FileServer(http.Dir(h.joinResource("css")))).ServeHTTP)
+	r.Get("/css/*", http.StripPrefix("/css", http.FileServer(http.Dir(h.join("css")))).ServeHTTP)
 	r.Get("/", h.showContributorSearchForm)
 	r.Get("/{owner}/{repo}/{uname}", h.showContributor)
 }
