@@ -87,8 +87,8 @@ func (h *HTML) register(r chi.Router) {
 }
 
 func (h *HTML) showContributorOrSearchForm(w http.ResponseWriter, r *http.Request) {
-	config, err := h.parse(r)
-	if err != nil {
+	config := h.parse(r)
+	if err := config.Validate(); err != nil {
 		h.showContributorSearchForm(w, config)
 		return
 	}
@@ -97,7 +97,9 @@ func (h *HTML) showContributorOrSearchForm(w http.ResponseWriter, r *http.Reques
 }
 
 func (h *HTML) showContributorSearchForm(w http.ResponseWriter, config *Config) {
-	if err := h.caster.Cast(w, "contributor.new", nil); err != nil {
+	if err := h.caster.Cast(w, "contributor.new", map[string]interface{}{
+		"Config": config,
+	}); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -123,7 +125,7 @@ func (h *HTML) showContributor(w http.ResponseWriter, config *Config) {
 	}
 }
 
-func (h *HTML) parse(r *http.Request) (*Config, error) {
+func (h *HTML) parse(r *http.Request) *Config {
 	q := r.URL.Query()
 	repo := "/"
 	if q.Get("r") != "" {
@@ -136,9 +138,5 @@ func (h *HTML) parse(r *http.Request) (*Config, error) {
 		Username: q.Get("u"),
 	}
 
-	if err := config.Validate(); err != nil {
-		return nil, err
-	}
-
-	return config, nil
+	return config
 }
